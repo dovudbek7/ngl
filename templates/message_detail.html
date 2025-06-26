@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Xabar{% endblock %}
+{% block content %}
+<!-- <h2>Message Detail</h2> -->
+<p><strong>Sana:</strong> {{ message.created_at|date:" D d, H:i" }}</p>
+<p style="white-space: pre-wrap;" class="detail-content">{{ message.message }}</p>
+<div class="back-btn-container">
+    <a href="{% url 'message_list' %}" class="back-btn">Ortga</a>
+</div>{% endblock %}

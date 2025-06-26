@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Asosiy{% endblock %}
+{% block content %}
+<!-- <a href="{% url 'login' %}">Login</a> -->
+<h2>Xabar uchun:</h2>
+<form method="post" novalidate>
+  {% csrf_token %}
+  {{ form.message }}<br />
+  <button type="submit" style="width: 100%;">Yuborish</button>
+</form>
+{% endblock %}

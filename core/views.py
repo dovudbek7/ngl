@@ -4,15 +4,63 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import AnonymousMessageForm
 from .models import AnonymousMessage
+import requests
+
+
+
+
+def get_location_from_ip(ip):
+    try:
+        res = requests.get(f"http://ip-api.com/json/{ip}").json()
+        return {
+            "country": res.get("country"),
+            "city": res.get("city"),
+            "lat": res.get("lat"),
+            "lon": res.get("lon")
+        }
+    except:
+        return {}
+    
+    
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
 
 def landing(request):
     form = AnonymousMessageForm()
+
     if request.method == "POST":
         form = AnonymousMessageForm(request.POST)
+
         if form.is_valid():
-            form.save()
+
+            # commit=False -> DBga yozmay turadi
+            msg = form.save(commit=False)
+
+            ip = get_client_ip(request)
+            loc = get_location_from_ip(ip)
+
+            # modelga joylaymiz
+            msg.ip_address = ip
+            msg.country = loc.get("country")
+            msg.city = loc.get("city")
+            msg.lat = loc.get("lat")
+            msg.lon = loc.get("lon")
+
+            msg.save()  # endi DBga yoziladi
+
             return redirect('thank_you')
+
     return render(request, 'landing.html', {'form': form})
+
+
+def thank_you(request):
+    return render(request, 'success.html')
 
 def thank_you(request):
     return render(request, 'success.html')

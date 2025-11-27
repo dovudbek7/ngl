@@ -1,9 +1,45 @@
 {% extends 'base.html' %}
 {% block title %}Xabar{% endblock %}
+
 {% block content %}
-<!-- <h2>Message Detail</h2> -->
-<p><strong>Sana:</strong> {{ message.created_at|date:" D d, H:i" }}</p>
-<p style="white-space: pre-wrap;" class="detail-content">{{ message.message }}</p>
+
+<p><strong>Sana:</strong> {{ message.created_at|date:"D d, H:i" }}</p>
+
+<p style="white-space: pre-wrap;" class="detail-content">
+    {{ message.message }}
+</p>
+
+<hr>
+
+<h3>Ma'lumotlari</h3>
+
+<p><strong>IP:</strong> {{ message.ip_address }}</p>
+<p><strong>Mamlakat:</strong> {{ message.country|default:"Noma'lum" }}</p>
+<p><strong>Shahar:</strong> {{ message.city|default:"Noma'lum" }}</p>
+<p><strong>Koordinatalar:</strong> 
+    {% if message.lat and message.lon %}
+        {{ message.lat }}, {{ message.lon }}
+    {% else %}
+        Noma'lum
+    {% endif %}
+</p>
+
+{% if message.lat and message.lon %}
+    <hr>
+    <h3>📍 Google Map</h3>
+
+    <p><strong>Lokatsiya:</strong> 
+    <a href="https://www.google.com/maps?q={{ message.lat }},{{ message.lon }}" 
+   target="_blank">
+   Xaritada ko‘rish
+</a>
+</p>
+{% endif %}
+
+<hr>
+
 <div class="back-btn-container">
     <a href="{% url 'message_list' %}" class="back-btn">Ortga</a>
-</div>{% endblock %}
+</div>
+
+{% endblock %}

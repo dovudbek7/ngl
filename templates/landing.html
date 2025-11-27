@@ -6,6 +6,38 @@
 <form method="post" novalidate>
   {% csrf_token %}
   {{ form.message }}<br />
-  <button type="submit" style="width: 100%;">Yuborish</button>
+
+  <input type="hidden" name="lat" id="lat">
+  <input type="hidden" name="lon" id="lon">
+
+  <button type="submit" id="submitBtn" style="width: 100%;">Yuborish</button>
 </form>
 {% endblock %}
+
+
+<script>
+document.getElementById("anonForm").addEventListener("submit", function(event) {
+    event.preventDefault(); // Formni vaqtincha to‘xtatamiz
+
+    // Browserdan location so‘raymiz
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                // Agar user "Allow" desa → koordinata olamiz
+                document.getElementById("lat").value = position.coords.latitude;
+                document.getElementById("lon").value = position.coords.longitude;
+
+                // Endi formni davom ettirib yuboramiz
+                document.getElementById("anonForm").submit();
+            },
+            function(error) {
+                // Agar user "Deny" desa → location YO‘Q, shunchaki davom ettiramiz
+                document.getElementById("anonForm").submit();
+            }
+        );
+    } else {
+        // Browser locationni qo‘llamasachi → davom ettiramiz
+        document.getElementById("anonForm").submit();
+    }
+});
+</script>
